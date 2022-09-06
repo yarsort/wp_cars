@@ -18,53 +18,50 @@ class _WidgetBottomNavigationBarState extends State<WidgetBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 45,
-      child: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedFontSize: 0,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: selectedMenuIndex,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), tooltip: 'Головна', label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.directions_car_filled), tooltip: 'Авто', label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.message), tooltip: 'Повідомлення', label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications), tooltip: 'Нагадування', label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.menu), tooltip: 'Меню', label: '')
-        ],
-        onTap: (int index) {
-          setState(() {
-            selectedMenuIndex = index;
-          });
+    return BottomNavigationBar(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      selectedFontSize: 0,
+      type: BottomNavigationBarType.fixed,
+      currentIndex: selectedMenuIndex,
+      items: const [
+        BottomNavigationBarItem(
+            icon: Icon(Icons.home), tooltip: 'Головна', label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car_filled), tooltip: 'Авто', label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.message), tooltip: 'Повідомлення', label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.notifications), tooltip: 'Нагадування', label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.menu), tooltip: 'Меню', label: '')
+      ],
+      onTap: (int index) {
+        setState(() {
+          selectedMenuIndex = index;
+        });
 
-          if(selectedMenuIndex == 0){
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScreenHomePage()));
-          }
-          if(selectedMenuIndex == 1){
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScreenCarsClient()));
-          }
-          if(selectedMenuIndex == 2){
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScreenMessages()));
-          }
-          if(selectedMenuIndex == 3){
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScreenNotifications()));
-          }
-          if(selectedMenuIndex == 4){
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ScreenMainMenu()));
-          }
-        },
-      ),
+        if(selectedMenuIndex == 0){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ScreenHomePage()));
+        }
+        if(selectedMenuIndex == 1){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ScreenCarsClient()));
+        }
+        if(selectedMenuIndex == 2){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ScreenMessages()));
+        }
+        if(selectedMenuIndex == 3){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ScreenNotifications()));
+        }
+        if(selectedMenuIndex == 4){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ScreenMainMenu()));
+        }
+      },
     );
   }
 }

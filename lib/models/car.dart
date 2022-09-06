@@ -1,5 +1,4 @@
 
-
 /// Автомобіль
 class Car {
   int id = 0;                     // Инкремент
@@ -7,9 +6,13 @@ class Car {
   String uid = '';                // UID для 1С и связи с ТЧ
   String code = '';               // Код для 1С
   String name = '';               // Имя
+  String nickname = '';           // Псевдонім
   String description = '';        // Опис автомобіля
+  String yearProduction = '';     // Опис автомобіля
   int mileage = 0;                // Пробег авто
+  int rating = 0;                 // Рейтинг авто
   String comment = '';            // Коммментарий
+  String picture = '';            // Картинка головна
   DateTime dateEdit = DateTime.now(); // Дата редактирования
 
   Car();
@@ -20,9 +23,13 @@ class Car {
     uid = json['uid'] ?? '';
     code = json['code'] ?? '';
     name = json['name'] ?? '';
+    nickname = json['nickname'] ?? '';
     description = json['description'] ?? '';
+    yearProduction = json['yearProduction'] ?? '';
     mileage = json['mileage'] ?? 0;
+    rating = json['rating'] ?? 0;
     comment = json['comment'] ?? '';
+    picture = json['picture'] ?? '';
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
   }
 
@@ -35,9 +42,13 @@ class Car {
     data['uid'] = uid;
     data['code'] = code;
     data['name'] = name;
+    data['nickname'] = nickname;
     data['description'] = description;
+    data['yearProduction'] = yearProduction;
     data['mileage'] = mileage;
+    data['rating'] = rating;
     data['comment'] = comment;
+    data['picture'] = picture;
     data['dateEdit'] = dateEdit.toIso8601String();
     return data;
   }
