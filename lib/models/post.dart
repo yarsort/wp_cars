@@ -10,6 +10,7 @@ class Post {
   String title = '';              // Заголовок
   String description = '';        // Опис статті в rich HTML
   String comment = '';            // Коммментарий
+  String picture = '';            // Головна картинка
   DateTime dateCreated = DateTime.now(); // Дата створення
   DateTime dateEdit = DateTime.now(); // Дата редагування
 
@@ -24,6 +25,7 @@ class Post {
     title = json['title'] ?? '';
     description = json['description'] ?? '';
     comment = json['comment'] ?? '';
+    picture = json['picture'] ?? '';
     dateCreated = DateTime.parse(json['dateCreated'] ?? DateTime.now().toIso8601String());
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
   }
@@ -40,6 +42,7 @@ class Post {
     data['title'] = title;
     data['description'] = description;
     data['comment'] = comment;
+    data['picture'] = picture;
     data['dateCreated'] = dateCreated.toIso8601String();
     data['dateEdit'] = dateEdit.toIso8601String();
     return data;

@@ -49,6 +49,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     carItem1.nickname = 'Аудюшка';
     carItem1.yearProduction = '2008';
     carItem1.mileage = 128900;
+    carItem1.vin = 'WV2ZZZ70ZXH095869';
     carItem1.rating = 108;
     carItem1.picture =
         'https://cdn3.focus.bg/autodata/i/audi/a4/a4-b8/medium/36227e9ccefec249e81d8842d7197714.jpg';
@@ -59,6 +60,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     carItem2.nickname = 'Развалюха';
     carItem2.yearProduction = '1974';
     carItem2.mileage = 383900;
+    carItem2.vin = 'WV1ZZZ7HZ7H111446';
     carItem2.rating = 10;
     carItem2.picture =
         'https://upload.wikimedia.org/wikipedia/commons/a/a6/Opel_Kadett_D_1_v_sst.jpg';
@@ -69,6 +71,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     carItem3.nickname = 'Хитрий Японець';
     carItem3.yearProduction = '2015';
     carItem3.mileage = 233900;
+    carItem3.vin = 'WVWNL9AN1DE579867';
     carItem3.picture =
         'https://www.avtogermes.ru/images/marks/suzuki/vitara/ii-restajling/colors/a6h/92f05cbe7823ed965e76ce487d09a8d2.png';
     listCars.add(carItem3);
@@ -78,6 +81,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     carItem5.nickname = 'ДелаетВещи';
     carItem5.yearProduction = '2017';
     carItem5.mileage = 203900;
+    carItem5.vin = 'WV1ZZZ7HZEH086112';
     carItem5.rating = 98;
     carItem5.picture =
         'https://upload.wikimedia.org/wikipedia/commons/9/91/VW_Passat_B8_Limousine_2.0_TDI_Highline.JPG';
@@ -87,6 +91,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     carItem7.name = 'Renault Kengoo Test Width Double Limit';
     carItem7.yearProduction = '2021';
     carItem7.mileage = 2200;
+    carItem7.vin = 'WV2ZZZ70ZXH095869';
     carItem7.rating = 345;
     carItem7.picture =
     'https://upload.wikimedia.org/wikipedia/commons/4/4a/Renault_Kangoo_I_front_20090121.jpg';
