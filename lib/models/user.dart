@@ -1,6 +1,6 @@
 
-/// Автомобіль
-class Car {
+/// Користувач
+class User {
   int id = 0;                     // Инкремент
   int isActive = 0;               // Пометка удаления
   String uid = '';                // UID для 1С и связи с ТЧ
@@ -8,17 +8,15 @@ class Car {
   String name = '';               // Имя
   String nickname = '';           // Псевдонім
   String description = '';        // Опис автомобіля
-  String yearProduction = '';     // Опис автомобіля
-  int mileage = 0;                // Пробег авто
-  int rating = 0;                 // Рейтинг авто
+  DateTime birthday = DateTime(1900,1,1); // Дата народження
+  int rating = 0;                 // Рейтинг користувача
   String comment = '';            // Коммментарий
   String picture = '';            // Картинка головна
-  String vin = '';                // Имя
   DateTime dateEdit = DateTime.now(); // Дата редактирования
 
-  Car();
+  User();
 
-  Car.fromJson(Map<String, dynamic> json) {
+  User.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
     isActive = 0;
     uid = json['uid'] ?? '';
@@ -26,12 +24,10 @@ class Car {
     name = json['name'] ?? '';
     nickname = json['nickname'] ?? '';
     description = json['description'] ?? '';
-    yearProduction = json['yearProduction'] ?? '';
-    mileage = json['mileage'] ?? 0;
+    birthday = DateTime.parse(json['birthday'] ?? DateTime(1900,1,1).toIso8601String());
     rating = json['rating'] ?? 0;
     comment = json['comment'] ?? '';
     picture = json['picture'] ?? '';
-    vin = json['vin'] ?? '';
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
   }
 
@@ -46,12 +42,10 @@ class Car {
     data['name'] = name;
     data['nickname'] = nickname;
     data['description'] = description;
-    data['yearProduction'] = yearProduction;
-    data['mileage'] = mileage;
+    data['birthday'] = birthday.toIso8601String();
     data['rating'] = rating;
     data['comment'] = comment;
     data['picture'] = picture;
-    data['vin'] = vin;
     data['dateEdit'] = dateEdit.toIso8601String();
     return data;
   }
