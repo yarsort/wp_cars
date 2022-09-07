@@ -54,7 +54,9 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
         children: [
           autoPicture(),
           autoName(),
+          const Divider(),
           autoParameters(),
+          const Divider(),
           carPosts(),
         ],
       ),
@@ -76,20 +78,20 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
 
   Widget autoName() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+      padding: const EdgeInsets.fromLTRB(10, 8, 8, 0),
       child: Text(
         widget.carItem.name,
         style: const TextStyle(
-            fontSize: 22, color: Colors.teal, fontWeight: FontWeight.bold),
+            fontSize: 16, color: Colors.teal, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget autoParameters() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-      child: Container(
-        height: 50,
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 1),
+      child: SizedBox(
+        height: 40,
         child: ListView(
           physics:
               const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -277,7 +279,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
           child: Text('Бортжурнал',
               textAlign: TextAlign.left,
               style: TextStyle(
-                  fontSize: 22, color: Colors.teal, fontWeight: FontWeight.bold)),
+                  fontSize: 16, color: Colors.teal, fontWeight: FontWeight.bold)),
         ),
         ListView.builder(
           shrinkWrap: true,
@@ -313,7 +315,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                         //leading: const Icon(Icons.directions_car),
                         title: Text(item.title,
                             style: const TextStyle(
-                              fontSize: 22,
+                              fontSize: 16,
                               color: Colors.teal,
                             )),
                         subtitle: Row(
