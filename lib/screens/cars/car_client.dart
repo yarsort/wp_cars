@@ -18,9 +18,9 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   List<OrderCustomer> listOrders = [];
   List<Post> listPosts = [];
 
-  readPosts() async {
+  loadPosts() async {
     Post post1 = Post();
-    post1.title = 'Заміна подшипників на колесо';
+    post1.title = 'Заміна підшипників на колесо';
     post1.description =
         'Пройдя все этапы гнева, и страданий, несколько раз за 6 месяцев истина была обретина. Осознав что фазы показывают ересь я решил выставить их как положено, был достигнут результат';
     post1.picture = 'https://agro-ukraine.com/imgs/board/28/881128-2.jpg';
@@ -30,7 +30,8 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     post2.title = 'Ремонт підвіски автомобіля';
     post2.description =
         'Пройдя все этапы гнева, и страданий, несколько раз за 6 месяцев истина была обретина. Осознав что фазы показывают ересь я решил выставить их как положено, был достигнут результат';
-    post2.picture = 'http://365cars.ru/wp-content/uploads/2013/12/podveska-avtomobilja-ustrojstvo.jpg';
+    post2.picture =
+        'http://365cars.ru/wp-content/uploads/2013/12/podveska-avtomobilja-ustrojstvo.jpg';
     listPosts.add(post2);
 
     setState(() {});
@@ -39,24 +40,29 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   @override
   void initState() {
     super.initState();
-    readPosts();
+    loadPosts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+
+      appBar: AppBar(
+        title: Text(widget.carItem.name),
+        actions: [
+          IconButton(onPressed: (){}, icon: const Icon(Icons.more_vert)),
+        ],
+      ),
       //bottomNavigationBar: const WidgetBottomNavigationBar(),
       body: ListView(
         shrinkWrap: true,
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
         children: [
           autoPicture(),
           autoName(),
-          const Divider(),
           autoParameters(),
-          const Divider(),
           carPosts(),
         ],
       ),
@@ -78,23 +84,23 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
 
   Widget autoName() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 8, 8, 0),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Text(
         widget.carItem.name,
         style: const TextStyle(
-            fontSize: 16, color: Colors.teal, fontWeight: FontWeight.bold),
+            fontSize: 18, color: Colors.teal, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget autoParameters() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 1),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       child: SizedBox(
         height: 40,
         child: ListView(
-          physics:
-              const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
           scrollDirection: Axis.horizontal,
           children: [
             Container(
@@ -274,70 +280,214 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(10, 8, 8, 0),
-          child: Text('Бортжурнал',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                  fontSize: 16, color: Colors.teal, fontWeight: FontWeight.bold)),
+        verticalSpacer(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+          child: Container(
+            child: const Text('Бортжурнал',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold)),
+          ),
         ),
+        verticalSpacer(),
         ListView.builder(
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: listPosts.length,
           itemBuilder: (context, index) {
+            int view = 0;
+            int like = 23;
+            int comment = 18;
+
             final item = listPosts[index];
             return Padding(
-              padding: const EdgeInsets.fromLTRB(6, 8, 8, 0),
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
               child: GestureDetector(
                 onTap: () async {},
-                child: Card(
-                  elevation: 3,
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.network(
-                            fit: BoxFit.fitWidth,
-                            item.picture != ''
-                                ? item.picture
-                                : 'https://placeimg.com/640/480/vehicle',
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                        //leading: const Icon(Icons.directions_car),
-                        title: Text(item.title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.teal,
-                            )),
-                        subtitle: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    /// Аватар та назва автомобіля
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                      child: SizedBox(
+                        child: Row(
+                          //crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Text(
-                                item.description,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.6)),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 45,
+                                width: 80,
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  //color: Colors.white,
+                                  //border: Border.all(width: 1.0, color: Colors.grey),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30.0), //
+                                  ),
+                                ),
+                                child: Image.network(
+                                    fit: BoxFit.fitWidth,
+                                    widget.carItem.picture),
                               ),
                             ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.carItem.name,
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.7),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(widget.carItem.nickname,
+                                    style: const TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                            const Spacer(),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    /// Текст поста
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.title,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black.withOpacity(0.7),
+                                  fontWeight: FontWeight.bold)),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
+                                        fontSize: 28),
+                                    children: <TextSpan>[
+                                      TextSpan(text: item.description),
+                                      const TextSpan(text: '...    '),
+                                      TextSpan(
+                                          text: 'Читати далі',
+                                          style: TextStyle(color: Colors.teal.withOpacity(0.7))),
+                                    ],
+                                  ),
+                                  textScaleFactor: 0.5,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+
+                    /// Картинка поста
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: SizedBox(
+                        height: 360,
+                        width: double.infinity,
+                        child: Image.network(
+                          fit: BoxFit.fitWidth,
+                          item.picture != ''
+                              ? item.picture
+                              : 'https://placeimg.com/640/480/vehicle',
+                        ),
+                      ),
+                    ),
+
+                    /// Перегляди, лайки, комментарі
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
+                      child: SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            /// Перегляди
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.visibility,
+                                        color: Colors.grey),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(view.toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                            /// Лайки
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.favorite,
+                                        color: Colors.grey),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(like.toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                            /// Коментарі
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.comment,
+                                        color: Colors.grey),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(comment.toString()),
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    /// Сірий фон ділителя постів
+                    verticalSpacer(),
+                  ],
                 ),
               ),
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget verticalSpacer() {
+    return SizedBox(
+      height: 7,
+      child: Container(color: Colors.black.withOpacity(0.1)),
     );
   }
 }
