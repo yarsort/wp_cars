@@ -1,12 +1,11 @@
 
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:wp_car/constant.dart';
 import 'package:wp_car/models/api_response.dart';
 import 'package:wp_car/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wp_car/system/system.dart';
 
 // login
 Future<ApiResponse> login (String email, String password) async {
@@ -41,7 +40,6 @@ Future<ApiResponse> login (String email, String password) async {
   return apiResponse;
 }
 
-
 // Register
 Future<ApiResponse> register(String name, String email, String password) async {
   ApiResponse apiResponse = ApiResponse();
@@ -74,7 +72,6 @@ Future<ApiResponse> register(String name, String email, String password) async {
   }
   return apiResponse;
 }
-
 
 // User
 Future<ApiResponse> getUserDetail() async {

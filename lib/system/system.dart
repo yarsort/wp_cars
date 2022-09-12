@@ -5,12 +5,13 @@ int selectedMenuIndex = 0;
 
 const Color iconColor = Color.fromRGBO(120, 198, 247, 1);
 
-const baseURL = 'http://:8000/api';
+const baseURL = 'http://192.168.50.4:8000/api';
 const loginURL = '$baseURL/login';
 const registerURL = '$baseURL/register';
 const logoutURL = '$baseURL/logout';
 const userURL = '$baseURL/user';
 const postsURL = '$baseURL/posts';
+const carsURL = '$baseURL/cars';
 const commentsURL = '$baseURL/comments';
 
 // ----- Errors -----

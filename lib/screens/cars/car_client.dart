@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wp_car/models/api_response.dart';
 import 'package:wp_car/models/car.dart';
 import 'package:wp_car/models/order_customer.dart';
 import 'package:wp_car/models/post.dart';
+import 'package:wp_car/screens/auth/login.dart';
+import 'package:wp_car/services/post_service.dart';
+import 'package:wp_car/services/user_service.dart';
 import 'package:wp_car/system/bottom_navigation_bar.dart';
 import 'package:wp_car/system/system.dart';
 
@@ -17,6 +21,9 @@ class ScreenCarClient extends StatefulWidget {
 class _ScreenCarClientState extends State<ScreenCarClient> {
   List<OrderCustomer> listOrders = [];
   List<Post> listPosts = [];
+
+  int userId = 0;
+  bool _loading = true;
 
   loadPosts() async {
     Post post1 = Post();
@@ -37,8 +44,49 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     setState(() {});
   }
 
-  readPostWeb() async {
+  // get all posts
+  Future<void> retrievePosts() async {
+    userId = await getUserId();
+    ApiResponse response = await getPosts();
 
+    if(response.error == null){
+      setState(() {
+        listPosts = response.data as List<Post>;
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if (response.error == unauthorized){
+      logout().then((value) => {
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>const ScreenLogin()), (route) => false)
+      });
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}'),
+      ));
+    }
+  }
+
+  // Post like dislike
+  void _handlePostLikeDislike(int postId) async {
+    ApiResponse response = await likeUnlikePost(postId);
+
+    if (response.error == null) {
+      retrievePosts();
+    }
+    else if (response.error == unauthorized) {
+      logout().then((value) =>
+      {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const ScreenLogin()), (
+            route) => false)
+      });
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+      ));
+    }
   }
 
   @override

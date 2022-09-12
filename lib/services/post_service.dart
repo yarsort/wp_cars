@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:wp_car/models/api_response.dart';
+import 'package:wp_car/models/post.dart';
 import 'package:wp_car/services/user_service.dart';
 import 'package:http/http.dart' as http;
-
-//import '../constant.dart';
+import 'package:wp_car/system/system.dart';
 
 // get all posts
 Future<ApiResponse> getPosts() async {
@@ -36,7 +35,6 @@ Future<ApiResponse> getPosts() async {
   }
   return apiResponse;
 }
-
 
 // Create post
 Future<ApiResponse> createPost(String body, String? image) async {
@@ -79,8 +77,6 @@ Future<ApiResponse> createPost(String body, String? image) async {
   return apiResponse;
 }
 
-
-
 // Edit post
 Future<ApiResponse> editPost(int postId, String body) async {
   ApiResponse apiResponse = ApiResponse();
@@ -115,7 +111,6 @@ Future<ApiResponse> editPost(int postId, String body) async {
   return apiResponse;
 }
 
-
 // Delete post
 Future<ApiResponse> deletePost(int postId) async {
   ApiResponse apiResponse = ApiResponse();
@@ -147,7 +142,6 @@ Future<ApiResponse> deletePost(int postId) async {
   }
   return apiResponse;
 }
-
 
 // Like or unlike post
 Future<ApiResponse> likeUnlikePost(int postId) async {
