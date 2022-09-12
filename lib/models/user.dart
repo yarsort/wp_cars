@@ -13,6 +13,7 @@ class User {
   String comment = '';            // Коммментарий
   String picture = '';            // Картинка головна
   DateTime dateEdit = DateTime.now(); // Дата редактирования
+  String token = '';
 
   User();
 
@@ -29,6 +30,7 @@ class User {
     comment = json['comment'] ?? '';
     picture = json['picture'] ?? '';
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
+    token = json['token'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
