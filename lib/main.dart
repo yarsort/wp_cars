@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'ACDisplay',
         primarySwatch: Colors.teal,
       ),
-      home: const ScreenHomePage(),
+      home: const ScreenSplashScreen(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

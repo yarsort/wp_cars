@@ -68,3 +68,14 @@ showErrorMessage(String textMessage, context) {
     ),
   );
 }
+
+TextButton kTextButton(String label, Function onPressed){
+  return TextButton(
+    style: ButtonStyle(
+        backgroundColor: MaterialStateColor.resolveWith((states) => Colors.teal),
+        padding: MaterialStateProperty.resolveWith((states) => const EdgeInsets.symmetric(vertical: 10))
+    ),
+    onPressed: () => onPressed(),
+    child: Text(label, style: const TextStyle(color: Colors.white),),
+  );
+}

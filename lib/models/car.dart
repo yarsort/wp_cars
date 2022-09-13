@@ -12,7 +12,7 @@ class Car {
   int mileage = 0;                // Пробег авто
   int rating = 0;                 // Рейтинг авто
   String comment = '';            // Коммментарий
-  String picture = '';            // Картинка головна
+  String image = '';            // Картинка головна
   String vin = '';                // Имя
   DateTime dateEdit = DateTime.now(); // Дата редактирования
 
@@ -30,7 +30,7 @@ class Car {
     mileage = json['mileage'] ?? 0;
     rating = json['rating'] ?? 0;
     comment = json['comment'] ?? '';
-    picture = json['picture'] ?? '';
+    image = json['image'] ?? '';
     vin = json['vin'] ?? '';
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
   }
@@ -50,7 +50,7 @@ class Car {
     data['mileage'] = mileage;
     data['rating'] = rating;
     data['comment'] = comment;
-    data['picture'] = picture;
+    data['image'] = image;
     data['vin'] = vin;
     data['dateEdit'] = dateEdit.toIso8601String();
     return data;

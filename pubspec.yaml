@@ -31,13 +31,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  http: ^0.13.5
   uuid: ^3.0.6 # Для генерации UUID
-  intl: ^0.17.0
-  sqflite: ^2.0.3+1   # Для хранения данных больших объемов
   shared_preferences: ^2.0.13   # Для хранения настроек
-  firebase_auth: ^3.6.4
-  firebase_core: ^1.21.0
-  path_provider: ^2.0.9
+  image_picker: ^0.8.5+3
   cached_network_image: ^3.2.1 # Для отображения картинок товарів в подборе
 
   google_fonts: ^3.0.1

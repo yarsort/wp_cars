@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wp_car/home.dart';
+import 'package:wp_car/models/api_response.dart';
+import 'package:wp_car/models/user.dart';
 import 'package:wp_car/screens/auth/login.dart';
+import 'package:wp_car/services/user_service.dart';
 import 'package:wp_car/system/system.dart';
 
 class ScreenRegistration extends StatefulWidget {
@@ -13,7 +15,8 @@ class ScreenRegistration extends StatefulWidget {
 }
 
 class _ScreenRegistrationState extends State<ScreenRegistration> {
-  final _auth = FirebaseAuth.instance;
+
+  bool loading = false;
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -56,29 +59,6 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
           contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
           labelText: 'Ім\'я',
           hintText: 'Ім\'я',
-          border: OutlineInputBorder(),
-        ));
-
-    //second name field
-    final secondNameField = TextFormField(
-        autofocus: false,
-        controller: secondNameEditingController,
-        keyboardType: TextInputType.name,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return ('Прізвище не може бути порожнім');
-          }
-          return null;
-        },
-        onSaved: (value) {
-          secondNameEditingController.text = value!;
-        },
-        textInputAction: TextInputAction.next,
-        decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.account_circle),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          labelText: 'Прізвище',
-          hintText: 'Прізвище',
           border: OutlineInputBorder(),
         ));
 
@@ -163,7 +143,7 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
 
     final signUpButton = ElevatedButton(
         onPressed: () async {
-          signUp(emailEditingController.text, passwordEditingController.text);
+          _registerUser();
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -247,8 +227,6 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
                           fit: BoxFit.contain,
                         )),
                     const SizedBox(height: 15),
-                    secondNameField,
-                    const SizedBox(height: 15),
                     firstNameField,
                     const SizedBox(height: 15),
                     emailField,
@@ -271,42 +249,31 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
     );
   }
 
-  void signUp(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await _auth
-            .createUserWithEmailAndPassword(email: email, password: password)
-            .then((value) => {postDetailsToFirestore()})
-            .catchError((e) {
-          showErrorMessage(e!.message, context);
-        });
-      } on FirebaseAuthException catch (error) {
-        switch (error.code) {
-          case 'invalid-email':
-            errorMessage = 'Неправильный почтовый ящик.';
-            break;
-          case 'wrong-password':
-            errorMessage = 'Неправильный пароль.';
-            break;
-          case 'user-not-found':
-            errorMessage = 'Пользователь с этим почтовым ящиком не обнаружен.';
-            break;
-          case 'user-disabled':
-            errorMessage = 'Пользователь с этим почтовым ящиком отключен.';
-            break;
-          case 'too-many-requests':
-            errorMessage = 'Слишком много запросов';
-            break;
-          case 'operation-not-allowed':
-            errorMessage = 'Авторизация с почтовым именем и паролем отклбчена.';
-            break;
-          default:
-            errorMessage = 'Неизвестная ошибка.';
-        }
-        showErrorMessage(errorMessage!, context);
-        debugPrint(error.code);
-      }
+  void _registerUser () async {
+
+    if (loading){
+      return;
     }
+
+    ApiResponse response = await register(firstNameEditingController.text, emailEditingController.text, passwordEditingController.text);
+    if(response.error == null) {
+      _saveAndRedirectToHome(response.data as User);
+    } else {
+      setState(() {
+        loading = !loading;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+      ));
+    }
+  }
+
+  // Save and redirect to home
+  void _saveAndRedirectToHome(User user) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString('token', user.token);
+    await pref.setInt('userId', user.id);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>ScreenHomePage()), (route) => false);
   }
 
   postDetailsToFirestore() async {

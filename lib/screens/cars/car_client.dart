@@ -19,6 +19,9 @@ class ScreenCarClient extends StatefulWidget {
 }
 
 class _ScreenCarClientState extends State<ScreenCarClient> {
+  final GlobalKey<FormState> _customListKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   List<OrderCustomer> listOrders = [];
   List<Post> listPosts = [];
 
@@ -28,16 +31,16 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   loadPosts() async {
     Post post1 = Post();
     post1.title = 'Заміна підшипників на колесо';
-    post1.description =
-        'Пройдя все этапы гнева, и страданий, несколько раз за 6 месяцев истина была обретина. Осознав что фазы показывают ересь я решил выставить их как положено, был достигнут результат';
-    post1.picture = 'https://agro-ukraine.com/imgs/board/28/881128-2.jpg';
+    post1.body =
+        'Пройдя все этапы гнева, и страданий, несколько раз за 6 месяцев истина была обретина. Осознав что фазы показывают ересь я решил выставить их как положено, был достигнут результат. По сравнению с предшествующей моделью, A4 в кузове B7, новая B8 выросла в размерах - 160 мм прибавила колёсная база, 117 мм - общая длина. Это позволило увеличить пространство для ног задних пассажиров. Хотя габаритные размеры увеличились, снаряженная масса снизилась примерно на 10%. Размер багажника также увеличился: до 480 литров для седана и 1430 л для универсала (Avant) при сложенных задних сидениях. ';
+    post1.image = 'https://agro-ukraine.com/imgs/board/28/881128-2.jpg';
     listPosts.add(post1);
 
     Post post2 = Post();
     post2.title = 'Ремонт підвіски автомобіля';
-    post2.description =
+    post2.body =
         'Пройдя все этапы гнева, и страданий, несколько раз за 6 месяцев истина была обретина. Осознав что фазы показывают ересь я решил выставить их как положено, был достигнут результат';
-    post2.picture =
+    post2.image =
         'http://365cars.ru/wp-content/uploads/2013/12/podveska-avtomobilja-ustrojstvo.jpg';
     listPosts.add(post2);
 
@@ -98,26 +101,47 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      extendBodyBehindAppBar: true,
+      body: CustomScrollView(
+        key: _customListKey,
+        slivers: <Widget>[
+          sliverAppBar(),
+          SliverList(
+            key: _formKey,
+            delegate: SliverChildListDelegate([
+              //autoName(),
+              autoParameters(),
+              autoDescription(),
+              Divider(),
+              carPosts(),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
 
-      appBar: AppBar(
-        title: Text(widget.carItem.name),
-        actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.more_vert)),
-        ],
-      ),
-      //bottomNavigationBar: const WidgetBottomNavigationBar(),
-      body: ListView(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics()),
-        children: [
-          autoPicture(),
-          autoName(),
-          autoParameters(),
-          carPosts(),
-        ],
-      ),
+  Widget sliverAppBar() {
+    return SliverAppBar(
+        floating: false,
+        pinned: true,
+        snap: false,
+        expandedHeight: 200,
+        flexibleSpace: FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
+            centerTitle: true,
+            title: Text(widget.carItem.name, style: const TextStyle(color: Colors.white, fontSize: 16.0,)),
+            background: Image.network(
+              widget.carItem.image,
+              fit: BoxFit.cover,
+            )),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: 'Додати новий автомобіль',
+            onPressed: () { /* ... */ },
+          ),
+        ]
     );
   }
 
@@ -127,27 +151,25 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
       width: double.infinity,
       child: Image.network(
         fit: BoxFit.fitWidth,
-        widget.carItem.picture != ''
-            ? widget.carItem.picture
-            : 'https://placeimg.com/640/480/vehicle',
+        widget.carItem.image,
       ),
     );
   }
 
-  Widget autoName() {
+  Widget autoDescription() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: Text(
-        widget.carItem.name,
-        style: const TextStyle(
-            fontSize: 18, color: Colors.teal, fontWeight: FontWeight.bold),
-      ),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Text(widget.carItem.description,
+          style: TextStyle(
+              fontSize: 14,
+              color: Colors.black.withOpacity(0.7),
+              fontWeight: FontWeight.normal)),
     );
   }
 
   Widget autoParameters() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
       child: SizedBox(
         height: 40,
         child: ListView(
@@ -332,20 +354,31 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        verticalSpacer(),
+        //verticalSpacer(),
         Padding(
-          padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
-          child: Container(
-            child: const Text('Бортжурнал',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.teal,
-                    fontWeight: FontWeight.bold)),
+          padding: const EdgeInsets.fromLTRB(10, 4, 10, 4),
+          child: Row(
+            children: [
+              const Text('Бортжурнал',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.teal,
+                      fontWeight: FontWeight.bold)),
+              const Spacer(),
+              SizedBox(
+                width: 50,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Icon(Icons.add, color: Colors.teal,),
+                ),
+              )
+            ],
           ),
         ),
-        verticalSpacer(),
+        Divider(),
         ListView.builder(
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           itemCount: listPosts.length,
@@ -355,8 +388,11 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
             int comment = 18;
 
             final item = listPosts[index];
+
+            var countWords = item.body.split(' ').length;
+
             return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: GestureDetector(
                 onTap: () async {},
                 child: Column(
@@ -384,7 +420,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                                 ),
                                 child: Image.network(
                                     fit: BoxFit.fitWidth,
-                                    widget.carItem.picture),
+                                    widget.carItem.image),
                               ),
                             ),
                             const SizedBox(
@@ -409,7 +445,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                         ),
                       ),
                     ),
-
+                    const Divider(indent: 8, endIndent: 8,),
                     /// Текст поста
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
@@ -428,23 +464,49 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                             children: [
                               Expanded(
                                 flex: 1,
-                                child: RichText(
-                                  text: TextSpan(
+                                child: Text(item.body,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.fade,
+                                    //softWrap: false,
                                     style: TextStyle(
-                                        color: Colors.black.withOpacity(0.6),
-                                        fontSize: 28),
-                                    children: <TextSpan>[
-                                      TextSpan(text: item.description),
-                                      const TextSpan(text: '...    '),
-                                      TextSpan(
-                                          text: 'Читати далі',
-                                          style: TextStyle(color: Colors.teal.withOpacity(0.7))),
-                                    ],
-                                  ),
-                                  textScaleFactor: 0.5,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(0.7),
+                                    fontWeight: FontWeight.normal)),
                                 ),
-                              ),
                             ],
+                          ),
+                          SizedBox(
+                            height: 25,
+                            child: Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('W:',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey.withOpacity(0.7),
+                                            fontWeight: FontWeight.normal)),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(countWords.toString(),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey.withOpacity(0.7),
+                                            fontWeight: FontWeight.normal)),
+                                  ],
+                                ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Text('Читати далі',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.teal.withOpacity(0.7),
+                                          fontWeight: FontWeight.normal)),
+                                )
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -452,14 +514,14 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
 
                     /// Картинка поста
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
                       child: SizedBox(
-                        height: 360,
+                        height: 200,
                         width: double.infinity,
                         child: Image.network(
                           fit: BoxFit.fitWidth,
-                          item.picture != ''
-                              ? item.picture
+                          item.image != ''
+                              ? item.image
                               : 'https://placeimg.com/640/480/vehicle',
                         ),
                       ),
@@ -478,7 +540,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                                 Row(
                                   children: [
                                     const Icon(Icons.visibility,
-                                        color: Colors.grey),
+                                        color: Colors.grey, size: 18),
                                     const SizedBox(
                                       width: 5,
                                     ),
@@ -494,7 +556,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                                 Row(
                                   children: [
                                     const Icon(Icons.favorite,
-                                        color: Colors.grey),
+                                        color: Colors.grey, size: 18),
                                     const SizedBox(
                                       width: 5,
                                     ),
@@ -510,7 +572,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
                                 Row(
                                   children: [
                                     const Icon(Icons.comment,
-                                        color: Colors.grey),
+                                        color: Colors.grey, size: 18),
                                     const SizedBox(
                                       width: 5,
                                     ),

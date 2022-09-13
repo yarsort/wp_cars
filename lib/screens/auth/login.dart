@@ -1,8 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wp_car/home.dart';
+import 'package:wp_car/models/api_response.dart';
+import 'package:wp_car/models/user.dart';
 import 'package:wp_car/screens/auth/registration.dart';
+import 'package:wp_car/services/user_service.dart';
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({Key? key}) : super(key: key);
@@ -12,15 +15,15 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
+
+  bool loading = false;
+
   // Form key
   final _formKey = GlobalKey<FormState>();
 
   // editing controller
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  // firebase
-  final _auth = FirebaseAuth.instance;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -39,9 +42,31 @@ class _ScreenLoginState extends State<ScreenLogin> {
     _initPackageInfo();
   }
 
+  void _loginUser() async {
+    ApiResponse response = await login(emailController.text, passwordController.text);
+    if (response.error == null){
+      _saveAndRedirectToHome(response.data as User);
+    }
+    else {
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+      ));
+    }
+  }
+
+  void _saveAndRedirectToHome(User user) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString('token', user.token);
+    await pref.setInt('userId', user.id);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>const ScreenHomePage()), (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Email field
+
     final emailField = TextFormField(
         autofocus: false,
         controller: emailController,
@@ -62,14 +87,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
         },
         textInputAction: TextInputAction.next,
         decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.mail, color: Colors.blue,),
+          prefixIcon: Icon(Icons.mail),
           contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
           labelText: 'E-mail',
           hintText: 'E-mail',
           border: OutlineInputBorder(),
         ));
 
-    // Password field
     final passwordField = TextFormField(
         autofocus: false,
         controller: passwordController,
@@ -89,7 +113,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         },
         textInputAction: TextInputAction.done,
         decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key, color: Colors.blue,),
+          prefixIcon: Icon(Icons.vpn_key),
           contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
           labelText: 'Пароль',
           hintText: 'Пароль',
@@ -98,7 +122,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
     final login2Button = ElevatedButton(
         onPressed: () async {
-          signIn(emailController.text, passwordController.text);
+          _loginUser();
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +138,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
     final registration2Button = ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.blue[200]),
+          backgroundColor: MaterialStateProperty.all(Colors.teal[200]),
         ),
         onPressed: () async {
           Navigator.push(
@@ -141,11 +165,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
         child: SingleChildScrollView(
           child: Container(
             height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/images/background_splash.jpg"),
-                fit: BoxFit.cover,
-              ),
+            decoration: BoxDecoration(
+              color: Colors.teal[100],
+              // image: DecorationImage(
+              //   image: AssetImage("assets/images/background_splash.jpg"),
+              //   fit: BoxFit.cover,
+              // ),
             ),
             //color: Colors.white,
             child: Padding(
@@ -173,16 +198,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                     login2Button,
                     const SizedBox(height: 15),
                     registration2Button,
-                    const Expanded(
-                      child: SizedBox(),
-                    ),
+                    const Spacer(),
                     Text(
                       'TM Yarsoft. Version: ${_packageInfo.version}. Build:  ${_packageInfo.buildNumber}',
                       style: const TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 25,
                     ),
                   ],
                 ),
@@ -211,44 +231,5 @@ class _ScreenLoginState extends State<ScreenLogin> {
     });
   }
 
-  // Login function
-  void signIn(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await _auth
-            .signInWithEmailAndPassword(email: email, password: password)
-            .then((uid) => {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const ScreenHomePage())),
-        });
-        showMessage('Авторизація успішно виконана!');
 
-      } on FirebaseAuthException catch (error) {
-        switch (error.code) {
-          case 'invalid-email':
-            errorMessage = 'Вказано неправильний E-mail.';
-            break;
-          case 'wrong-password':
-            errorMessage = 'Вказано неправильний пароль.';
-            break;
-          case 'user-not-found':
-            errorMessage = 'Користувача не знайдено.';
-            break;
-          case 'user-disabled':
-            errorMessage = 'Користувача вимкнено.';
-            break;
-          case 'too-many-requests':
-            errorMessage = 'Занадто багато запитів підключення.';
-            break;
-          case 'operation-not-allowed':
-            errorMessage = 'Операція авторизації користувача не підключена.';
-            break;
-          default:
-            errorMessage = 'Невідома помилка.';
-        }
-        showMessage(errorMessage!);
-        debugPrint(error.code);
-      }
-    }
-  }
 }

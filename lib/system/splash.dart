@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wp_car/home.dart';
+import 'package:wp_car/models/api_response.dart';
 import 'package:wp_car/screens/auth/login.dart';
+import 'package:wp_car/services/user_service.dart';
 import 'package:wp_car/system/system.dart';
 
 class ScreenSplashScreen extends StatefulWidget {
@@ -30,29 +30,51 @@ class _ScreenSplashScreenState extends State<ScreenSplashScreen> {
   @override
   void initState() {
     super.initState();
-
     _initPackageInfo();
     initializeUser();
   }
 
   Future initializeUser() async {
-    if (FirebaseAuth.instance.currentUser != null){
+
+    String token = await getToken();
+    if(token == ''){
       Timer(
         const Duration(seconds: 3),
             () => Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (context) =>
-                const ScreenHomePage()),
+                const ScreenLogin()),
                 (Route<dynamic> route) => false),
       );
-    } else {
-      Timer(const Duration(seconds: 4),
+    }
+    else {
+      ApiResponse response = await getUserDetail();
+      if (response.error == null){
+
+        Timer(
+          const Duration(seconds: 3),
+              () => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) =>
+                  const ScreenHomePage()),
+                  (Route<dynamic> route) => false),
+        );
+      }
+      else if (response.error == unauthorized){
+        Timer(
+          const Duration(seconds: 3),
               () => Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) =>
                   const ScreenLogin()),
-                  //const ScreenHomePage()),
-                  (Route<dynamic> route) => false));
+                  (Route<dynamic> route) => false),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}'),
+        ));
+      }
     }
   }
 

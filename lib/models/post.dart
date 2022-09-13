@@ -3,31 +3,27 @@
 /// Стаття
 class Post {
   int id = 0;                     // Инкремент
-  int isActive = 0;               // Пометка удаления
-  String uid = '';                // UID для 1С и связи с ТЧ
-  String uidAuthor = '';          // UID автора статті
-  String code = '';               // Код для 1С
+  int user_id = 0;          // UID автора статті
+  int auto_id = 0;          // UID автора статті
   String title = '';              // Заголовок
-  String description = '';        // Опис статті в rich HTML
-  String comment = '';            // Коммментарий
-  String picture = '';            // Головна картинка
-  DateTime dateCreated = DateTime.now(); // Дата створення
-  DateTime dateEdit = DateTime.now(); // Дата редагування
+  String body = '';        // Опис статті в rich HTML
+  String tags = '';            // Коммментарий
+  String image = '';            // Головна картинка
+  DateTime created_at = DateTime.now(); // Дата створення
+  DateTime updated_at = DateTime.now(); // Дата редагування
 
   Post();
 
   Post.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
-    isActive = 0;
-    uid = json['uid'] ?? '';
-    uidAuthor = json['uidAuthor'] ?? '';
-    code = json['code'] ?? '';
+    user_id = json['user_id'] ?? 0;
+    auto_id = json['auto_id'] ?? 0;
     title = json['title'] ?? '';
-    description = json['description'] ?? '';
-    comment = json['comment'] ?? '';
-    picture = json['picture'] ?? '';
-    dateCreated = DateTime.parse(json['dateCreated'] ?? DateTime.now().toIso8601String());
-    dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
+    body = json['body'] ?? '';
+    tags = json['tags'] ?? '';
+    image = json['image'] ?? '';
+    created_at = DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String());
+    updated_at = DateTime.parse(json['updated_at'] ?? DateTime.now().toIso8601String());
   }
 
   Map<String, dynamic> toJson() {
@@ -35,16 +31,14 @@ class Post {
     if (id != 0) {
       data['id'] = id;
     }
-    data['isGroup'] = 0;
-    data['uid'] = uid;
-    data['uidAuthor'] = uidAuthor;
-    data['code'] = code;
+    data['user_id'] = user_id;
+    data['auto_id'] = auto_id;
     data['title'] = title;
-    data['description'] = description;
-    data['comment'] = comment;
-    data['picture'] = picture;
-    data['dateCreated'] = dateCreated.toIso8601String();
-    data['dateEdit'] = dateEdit.toIso8601String();
+    data['body'] = body;
+    data['tags'] = tags;
+    data['image'] = image;
+    data['created_at'] = created_at.toIso8601String();
+    data['updated_at'] = updated_at.toIso8601String();
     return data;
   }
 }
