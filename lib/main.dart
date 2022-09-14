@@ -11,15 +11,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Включаем только портретную ориентацию
-  // await SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  //   DeviceOrientation.portraitDown,
-  // ]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
-  // Подключаем Firebase для авторизации
-  //await Firebase.initializeApp();
-
-  // Красим статусар в синий цвет
+  // Красим статусар
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(systemNavigationBarColor: Colors.teal));
 

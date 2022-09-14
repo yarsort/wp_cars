@@ -9,11 +9,18 @@ class User {
   String nickname = '';           // Псевдонім
   String description = '';        // Опис автомобіля
   DateTime birthday = DateTime(1900,1,1); // Дата народження
+  int hideBirthday = 0;           // Сховати день народження
   int rating = 0;                 // Рейтинг користувача
   String comment = '';            // Коммментарий
   String picture = '';            // Картинка головна
+  String avatar = '';             // Аватарка головна
   DateTime dateEdit = DateTime.now(); // Дата редактирования
   String token = '';
+  int countryId = 0;
+  int cityId = 0;
+  String phone = '';              // Номер телефону
+  String email = '';              // Пошта
+  int yearStartDriving = 0;       // Год початку керування авто
 
   User();
 

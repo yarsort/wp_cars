@@ -2,7 +2,6 @@
 /// Автомобіль
 class Car {
   int id = 0;                     // Инкремент
-  int isActive = 0;               // Пометка удаления
   String uid = '';                // UID для 1С и связи с ТЧ
   String code = '';               // Код для 1С
   String name = '';               // Имя
@@ -20,7 +19,6 @@ class Car {
 
   Car.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
-    isActive = 0;
     uid = json['uid'] ?? '';
     code = json['code'] ?? '';
     name = json['name'] ?? '';
@@ -37,7 +35,6 @@ class Car {
 
   Car.fromJsonLaravel(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
-    isActive = 0;
     uid = json['uid'] ?? '';
     code = json['code'] ?? '';
     name = json['name'] ?? '';
@@ -57,13 +54,12 @@ class Car {
     if (id != 0) {
       data['id'] = id;
     }
-    data['isGroup'] = 0;
     data['uid'] = uid;
     data['code'] = code;
     data['name'] = name;
     data['nickname'] = nickname;
     data['description'] = description;
-    data['yearProduction'] = yearProduction;
+    data['year_production'] = yearProduction;
     data['mileage'] = mileage;
     data['rating'] = rating;
     data['comment'] = comment;
