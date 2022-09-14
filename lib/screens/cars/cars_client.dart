@@ -210,33 +210,4 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     );
   }
 
-  Widget carsCardTemplate() {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: listCars.length,
-      itemBuilder: (context, index) {
-        var carItem = listCars[index];
-        return Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Card(
-              elevation: 2,
-              child: ListTile(
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ScreenCarClient(carItem: carItem),
-                    ),
-                  );
-                  setState(() {
-                    loadOrders();
-                  });
-                },
-                title: Text(carItem.name),
-              ),
-            ));
-      },
-    );
-  }
 }

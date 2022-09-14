@@ -28,6 +28,9 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   int userId = 0;
   bool _loading = true;
 
+  Color bgGreyColor = Colors.grey.shade100;
+  Color bgWhiteColor = Colors.white;
+
   loadPosts() async {
     Post post1 = Post();
     post1.title = 'Заміна підшипників на колесо';
@@ -101,6 +104,7 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgGreyColor,
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
         key: _customListKey,
@@ -112,7 +116,6 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
               //autoName(),
               autoParameters(),
               autoDescription(),
-              Divider(),
               carPosts(),
             ]),
           ),
@@ -156,101 +159,119 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     );
   }
 
-  Widget autoDescription() {
+  Widget autoParameters() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Text(widget.carItem.description,
-          style: TextStyle(
-              fontSize: 14,
-              color: Colors.black.withOpacity(0.7),
-              fontWeight: FontWeight.normal)),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: Container(
+        color: bgWhiteColor,
+        height: 56,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            scrollDirection: Axis.horizontal,
+            children: [
+              Container(
+                height: 50,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 1.0, color: Colors.grey),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(5.0), //
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.date_range, color: Colors.teal),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                        child: Text(widget.carItem.yearProduction),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Container(
+                height: 50,
+                width: 110,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 1.0, color: Colors.grey),
+                  borderRadius: const BorderRadius.all(Radius.circular(5.0) //
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.speed, color: Colors.teal),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                        child: Text(widget.carItem.mileage.toString()),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Container(
+                height: 50,
+                width: 220,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 1.0, color: Colors.grey),
+                  borderRadius: const BorderRadius.all(Radius.circular(5.0) //
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.qr_code_scanner, color: Colors.teal),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        child: Text(widget.carItem.vin),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget autoParameters() {
+  Widget autoDescription() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-      child: SizedBox(
-        height: 40,
-        child: ListView(
-          physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics()),
-          scrollDirection: Axis.horizontal,
-          children: [
-            Container(
-              height: 50,
-              width: 90,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(width: 1.0, color: Colors.grey),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5.0), //
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.date_range, color: Colors.teal),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                      child: Text(widget.carItem.yearProduction),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Container(
-              height: 50,
-              width: 110,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(width: 1.0, color: Colors.grey),
-                borderRadius: const BorderRadius.all(Radius.circular(5.0) //
-                    ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.speed, color: Colors.teal),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                      child: Text(widget.carItem.mileage.toString()),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Container(
-              height: 50,
-              width: 220,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(width: 1.0, color: Colors.grey),
-                borderRadius: const BorderRadius.all(Radius.circular(5.0) //
-                    ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.qr_code_scanner, color: Colors.teal),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      child: Text(widget.carItem.vin),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            bottom: BorderSide(
+                width: 1.0, color: Colors.grey.shade200,
+            )
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+          child: Text(widget.carItem.description,
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black.withOpacity(0.7),
+                  fontWeight: FontWeight.normal)),
         ),
       ),
     );
@@ -356,27 +377,39 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
       children: [
         //verticalSpacer(),
         Padding(
-          padding: const EdgeInsets.fromLTRB(10, 4, 10, 4),
-          child: Row(
-            children: [
-              const Text('Бортжурнал',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold)),
-              const Spacer(),
-              SizedBox(
-                width: 50,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.add, color: Colors.teal,),
-                ),
-              )
-            ],
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+          child: Container(
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(width: 1.0, color: Colors.grey.shade200),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5.0), //
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Row(
+                children: [
+                  const Text('Бортжурнал',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.teal,
+                          fontWeight: FontWeight.bold)),
+                  const Spacer(),
+                  SizedBox(
+                    width: 50,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Icon(Icons.add, color: Colors.teal,),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
-        Divider(),
         ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -392,203 +425,185 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
             var countWords = item.body.split(' ').length;
 
             return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: GestureDetector(
-                onTap: () async {},
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    /// Аватар та назва автомобіля
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                      child: SizedBox(
-                        child: Row(
-                          //crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 45,
-                                width: 80,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  //color: Colors.white,
-                                  //border: Border.all(width: 1.0, color: Colors.grey),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30.0), //
-                                  ),
-                                ),
-                                child: Image.network(
-                                    fit: BoxFit.fitWidth,
-                                    widget.carItem.image),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.carItem.name,
-                                  style: TextStyle(
-                                      color: Colors.black.withOpacity(0.7),
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(widget.carItem.nickname,
-                                    style: const TextStyle(color: Colors.grey)),
-                              ],
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Divider(indent: 8, endIndent: 8,),
-                    /// Текст поста
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(item.title,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black.withOpacity(0.7),
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 1.0, color: Colors.grey.shade200),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(5.0), //
+                  ),
+                ),
+                child: GestureDetector(
+                  onTap: () async {},
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      /// Аватар та назва автомобіля
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                        child: SizedBox(
+                          child: Row(
                             children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(item.body,
-                                    maxLines: 4,
-                                    overflow: TextOverflow.fade,
-                                    //softWrap: false,
-                                    style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black.withOpacity(0.7),
-                                    fontWeight: FontWeight.normal)),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(5.0),
+                                child: Container(
+                                  height: 45,
+                                  width: 80,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30.0), //
+                                    ),
+                                  ),
+                                  child: Image.network(
+                                      fit: BoxFit.fitWidth,
+                                      widget.carItem.image),
                                 ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.carItem.name,
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.7),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(widget.carItem.nickname,
+                                      style: const TextStyle(color: Colors.grey)),
+                                ],
+                              ),
+                              const Spacer(),
                             ],
                           ),
-                          SizedBox(
-                            height: 25,
-                            child: Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('W:',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey.withOpacity(0.7),
-                                            fontWeight: FontWeight.normal)),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(countWords.toString(),
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey.withOpacity(0.7),
-                                            fontWeight: FontWeight.normal)),
-                                  ],
-                                ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Text('Читати далі',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.teal.withOpacity(0.7),
-                                          fontWeight: FontWeight.normal)),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    /// Картинка поста
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-                      child: SizedBox(
-                        height: 200,
-                        width: double.infinity,
-                        child: Image.network(
-                          fit: BoxFit.fitWidth,
-                          item.image != ''
-                              ? item.image
-                              : 'https://placeimg.com/640/480/vehicle',
                         ),
                       ),
-                    ),
 
-                    /// Перегляди, лайки, комментарі
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
-                      child: SizedBox(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      const Divider(indent: 8, endIndent: 8,),
+
+                      /// Текст поста
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /// Перегляди
-                            Column(
+                            Text(item.title,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black.withOpacity(0.7),
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.visibility,
-                                        color: Colors.grey, size: 18),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(view.toString()),
-                                  ],
-                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(item.body,
+                                      maxLines: 4,
+                                      overflow: TextOverflow.fade,
+                                      //softWrap: false,
+                                      style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black.withOpacity(0.7),
+                                      fontWeight: FontWeight.normal)),
+                                  ),
                               ],
                             ),
-
-                            /// Лайки
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.favorite,
-                                        color: Colors.grey, size: 18),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(like.toString()),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            /// Коментарі
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.comment,
-                                        color: Colors.grey, size: 18),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(comment.toString()),
-                                  ],
-                                ),
-                              ],
+                            SizedBox(
+                              height: 25,
+                              child: Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('W:',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey.withOpacity(0.7),
+                                              fontWeight: FontWeight.normal)),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(countWords.toString(),
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey.withOpacity(0.7),
+                                              fontWeight: FontWeight.normal)),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () {},
+                                    child: Text('Читати далі',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.teal.withOpacity(0.7),
+                                            fontWeight: FontWeight.normal)),
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),
                       ),
-                    ),
 
-                    /// Сірий фон ділителя постів
-                    verticalSpacer(),
-                  ],
+                      /// Картинка поста
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 8),
+                        child: Container(
+
+                          height: 200,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                                bottom: BorderSide(
+                                  width: 1.0, color: Colors.grey.shade100,
+                                ),
+                                top: BorderSide(
+                                  width: 1.0, color: Colors.grey.shade100,
+                                )
+                            ),
+                          ),
+                          child: Image.network(
+                            fit: BoxFit.fitWidth,
+                            item.image != ''
+                                ? item.image
+                                : 'https://placeimg.com/640/480/vehicle',
+                          ),
+                        ),
+                      ),
+
+                      /// Перегляди, лайки, комментарі
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
+                        child: SizedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              /// Перегляди
+                              postViewLikeComment(Icons.visibility, view),
+
+                              const VerticalDivider(),
+
+                              /// Лайки
+                              postViewLikeComment(Icons.favorite, like),
+
+                              const VerticalDivider(indent: 3, endIndent: 3,),
+
+                              /// Коментарі
+                              postViewLikeComment(Icons.comment, comment),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -598,10 +613,21 @@ class _ScreenCarClientState extends State<ScreenCarClient> {
     );
   }
 
-  Widget verticalSpacer() {
-    return SizedBox(
-      height: 7,
-      child: Container(color: Colors.black.withOpacity(0.1)),
+  Widget postViewLikeComment(IconData icon, int view) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(icon,
+                color: Colors.grey, size: 18),
+            const SizedBox(
+              width: 5,
+            ),
+            Text(view.toString()),
+          ],
+        ),
+      ],
     );
   }
+
 }

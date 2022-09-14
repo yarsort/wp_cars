@@ -92,6 +92,9 @@ Future<ApiResponse> getUserDetail() async {
       case 401:
         apiResponse.error = unauthorized;
         break;
+      case 500:
+        apiResponse.error = response.reasonPhrase;
+        break;
       default:
         apiResponse.error = somethingWentWrong;
         break;

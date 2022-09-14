@@ -15,7 +15,6 @@ class ScreenRegistration extends StatefulWidget {
 }
 
 class _ScreenRegistrationState extends State<ScreenRegistration> {
-
   bool loading = false;
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -143,6 +142,16 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
 
     final signUpButton = ElevatedButton(
         onPressed: () async {
+          if (emailEditingController.text.trim() == '') {
+            showErrorMessage('Паролі не співпадають', context);
+            return;
+          }
+          if (passwordEditingController.text !=
+              confirmPasswordEditingController.text) {
+            showErrorMessage('Паролі не співпадають', context);
+            return;
+          }
+
           _registerUser();
         },
         child: Row(
@@ -170,21 +179,26 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
           backgroundColor: MaterialStateProperty.all(Colors.blue[200]),
         ),
         onPressed: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                  const ScreenLogin()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const ScreenLogin()));
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            SizedBox(height: 50,),
-            Text('Увійти',
+            SizedBox(
+              height: 50,
+            ),
+            Text(
+              'Увійти',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),),
-            SizedBox(height: 50,),
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 50,
+            ),
           ],
         ));
 
@@ -249,22 +263,21 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
     );
   }
 
-  void _registerUser () async {
-
-    if (loading){
+  void _registerUser() async {
+    if (loading) {
       return;
     }
 
-    ApiResponse response = await register(firstNameEditingController.text, emailEditingController.text, passwordEditingController.text);
-    if(response.error == null) {
+    ApiResponse response = await register(firstNameEditingController.text,
+        emailEditingController.text, passwordEditingController.text);
+    if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
     } else {
       setState(() {
         loading = !loading;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${response.error}')
-      ));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
 
@@ -273,22 +286,8 @@ class _ScreenRegistrationState extends State<ScreenRegistration> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token);
     await pref.setInt('userId', user.id);
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>ScreenHomePage()), (route) => false);
-  }
-
-  postDetailsToFirestore() async {
-    showMessage('Аккаунт успішно створено!', context);
-
-    final SharedPreferences prefs = await _prefs;
-
-    prefs.setString(
-        'settings_nameUser',
-        '${firstNameEditingController.text} ${secondNameEditingController.text}');
-    prefs.setString('settings_emailUser', emailEditingController.text);
-
-    Navigator.pushAndRemoveUntil(
-        (context),
-        MaterialPageRoute(builder: (context) => const ScreenHomePage()),
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ScreenHomePage()),
         (route) => false);
   }
 }

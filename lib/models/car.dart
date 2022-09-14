@@ -35,6 +35,23 @@ class Car {
     dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
   }
 
+  Car.fromJsonLaravel(Map<String, dynamic> json) {
+    id = json['id'] ?? 0;
+    isActive = 0;
+    uid = json['uid'] ?? '';
+    code = json['code'] ?? '';
+    name = json['name'] ?? '';
+    nickname = json['nickname'] ?? '';
+    description = json['description'] ?? '';
+    yearProduction = json['year_production'].toString();
+    mileage = json['mileage'] ?? 0;
+    rating = json['rating'] ?? 0;
+    comment = json['comment'] ?? '';
+    image = json['image'] ?? '';
+    vin = json['vin_code'] ?? '';
+    dateEdit = DateTime.parse(json['edited_at'] ?? DateTime.now().toIso8601String());
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (id != 0) {

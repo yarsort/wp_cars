@@ -18,7 +18,7 @@ Future<ApiResponse> getCars() async {
 
     switch(response.statusCode){
       case 200:
-        apiResponse.data = jsonDecode(response.body)['cars'].map((p) => Car.fromJson(p)).toList();
+        apiResponse.data = jsonDecode(response.body)['cars'].map((p) => Car.fromJsonLaravel(p)).toList();
         // we get list of cars, so we need to map each item to car model
         apiResponse.data as List<dynamic>;
         break;
@@ -48,35 +48,37 @@ Future<ApiResponse> createCar(
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
+    int userID = await getUserId();
     final response = await http.post(Uri.parse(carsURL),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token'
-        }, body: image != null ? {
-          'type_transport_id': '0',
-          'car_brand_id': '0',
-          'car_model_id': '0',
+        },
+        body: image != null ? {
+          'typeTransportId': '0',
+          'carBrandId': '0',
+          'carModelId': '0',
           'uid': '00000000-0000-0000-0000-000000000000',
           'code': '00000000-0000-0000-0000-000000000000',
           'name': name.toString(),
           'nickname': nickname.toString(),
           'description': description.toString(),
-          'year_production': yearProduction.toString(),
+          'yearProduction': yearProduction.toString(),
           'mileage': mileage.toString(),
-          'vin_code': vinCode.toString(),
+          'vinCode': vinCode.toString(),
           'image': image
         } : {
-          'type_transport_id': '0',
-          'car_brand_id': '0',
-          'car_model_id': '0',
+          'typeTransportId': '0',
+          'carBrandId': '0',
+          'carModelId': '0',
           'uid': '00000000-0000-0000-0000-000000000000',
           'code': '00000000-0000-0000-0000-000000000000',
           'name': name.toString(),
           'nickname': nickname.toString(),
           'description': description.toString(),
-          'year_production': yearProduction.toString(),
+          'yearProduction': yearProduction.toString(),
           'mileage': mileage.toString(),
-          'vin_code': vinCode.toString()
+          'vinCode': vinCode.toString()
         });
 
     // here if the image is null we just send the body, if not null we send the image too

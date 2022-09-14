@@ -34,6 +34,78 @@ class _ScreenSplashScreenState extends State<ScreenSplashScreen> {
     initializeUser();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        bool backStatus = onWillPop();
+        if (backStatus) {
+          exit(0);
+        }
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            color: Colors.teal,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                const Icon(Icons.car_repair, size: 120, color: Colors.white),
+                const SizedBox(
+                  height: 40,
+                ),
+                const Text(
+                  'WP',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 80,
+                      color: Colors.white),textAlign: TextAlign.center,
+                ),
+                const Text(
+                  'cars',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 60,
+                      color: Colors.white),textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Коли любиш своє авто',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.teal.shade100),textAlign: TextAlign.center,
+                ),
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                Text(
+                  'TM Yarsoft. Version: ${_packageInfo.version}. Build:  ${_packageInfo.buildNumber}',
+                  style: TextStyle(color: Colors.teal.shade400),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future initializeUser() async {
 
     String token = await getToken();
@@ -50,7 +122,6 @@ class _ScreenSplashScreenState extends State<ScreenSplashScreen> {
     else {
       ApiResponse response = await getUserDetail();
       if (response.error == null){
-
         Timer(
           const Duration(seconds: 3),
               () => Navigator.of(context).pushAndRemoveUntil(
@@ -76,70 +147,6 @@ class _ScreenSplashScreenState extends State<ScreenSplashScreen> {
         ));
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        bool backStatus = onWillPop();
-        if (backStatus) {
-          exit(0);
-        }
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            image: DecorationImage(
-              image: AssetImage("assets/images/background_splash.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Expanded(
-                  child: SizedBox(),
-                ),
-                SizedBox(
-                    height: 150,
-                    child: Image.asset(
-                      "assets/images/wpsales_logo.png",
-                      fit: BoxFit.contain,
-                    )),
-                const SizedBox(
-                  height: 80,
-                ),
-                const Text(
-                  'Помічник менеджера \n продажів',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 27,
-                      color: Colors.blue),textAlign: TextAlign.center,
-                ),
-                const Expanded(
-                  child: SizedBox(),
-                ),
-                Text(
-                  'TM Yarsoft. Version: ${_packageInfo.version}. Build:  ${_packageInfo.buildNumber}',
-                  style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> _initPackageInfo() async {
