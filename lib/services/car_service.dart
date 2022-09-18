@@ -1,16 +1,20 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:wp_car/models/api_response.dart';
 import 'package:wp_car/models/car.dart';
 import 'package:wp_car/services/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:wp_car/system/system.dart';
 
+const carsURL = '$baseURL/cars';
+const userCarsURL = '$baseURL/user-cars';
+
 // get all cars
-Future<ApiResponse> getCars() async {
+Future<ApiResponse> getUserCars() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
-    final response = await http.get(Uri.parse(carsURL),
+    final response = await http.get(Uri.parse(userCarsURL),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token'
@@ -31,13 +35,14 @@ Future<ApiResponse> getCars() async {
     }
   }
   catch (e){
+    debugPrint(e.toString());
     apiResponse.error = serverError;
   }
   return apiResponse;
 }
 
 // Create car
-Future<ApiResponse> createCar(
+Future<ApiResponse> createUserCar(
     String name,
     String nickname,
     String description,
@@ -48,41 +53,40 @@ Future<ApiResponse> createCar(
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
-    int userID = await getUserId();
+    //int userID = await getUserId();
     final response = await http.post(Uri.parse(carsURL),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token'
         },
         body: image != null ? {
-          'typeTransportId': '0',
-          'carBrandId': '0',
-          'carModelId': '0',
+          'type_transport_id': '1',
+          'car_brand_id': '1',
+          'car_model_id': '1',
           'uid': '00000000-0000-0000-0000-000000000000',
           'code': '00000000-0000-0000-0000-000000000000',
           'name': name.toString(),
           'nickname': nickname.toString(),
           'description': description.toString(),
-          'yearProduction': yearProduction.toString(),
+          'year_production': yearProduction.toString(),
           'mileage': mileage.toString(),
-          'vinCode': vinCode.toString(),
+          'vin_code': vinCode.toString(),
           'image': image
         } : {
-          'typeTransportId': '0',
-          'carBrandId': '0',
-          'carModelId': '0',
+          'type_transport_id': '1',
+          'car_brand_id': '1',
+          'car_model_id': '1',
           'uid': '00000000-0000-0000-0000-000000000000',
           'code': '00000000-0000-0000-0000-000000000000',
           'name': name.toString(),
           'nickname': nickname.toString(),
           'description': description.toString(),
-          'yearProduction': yearProduction.toString(),
+          'year_production': yearProduction.toString(),
           'mileage': mileage.toString(),
-          'vinCode': vinCode.toString()
+          'vin_code': vinCode.toString()
         });
 
     // here if the image is null we just send the body, if not null we send the image too
-
     switch(response.statusCode){
       case 200:
         apiResponse.data = jsonDecode(response.body);
@@ -107,7 +111,7 @@ Future<ApiResponse> createCar(
 }
 
 // Edit car
-Future<ApiResponse> editCar(
+Future<ApiResponse> editUserCar(
     int carId,
     String name,
     String nickname,
@@ -172,7 +176,7 @@ Future<ApiResponse> editCar(
 }
 
 // Delete car
-Future<ApiResponse> deleteCar(int carId) async {
+Future<ApiResponse> deleteUserCar(int carId) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();

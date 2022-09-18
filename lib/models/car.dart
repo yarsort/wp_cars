@@ -2,6 +2,9 @@
 /// Автомобіль
 class Car {
   int id = 0;                     // Инкремент
+  int typeTransportId = 0;        //
+  int carBrandId = 0;             //
+  int carModelId = 0;             //
   String uid = '';                // UID для 1С и связи с ТЧ
   String code = '';               // Код для 1С
   String name = '';               // Имя
@@ -12,29 +15,19 @@ class Car {
   int rating = 0;                 // Рейтинг авто
   String comment = '';            // Коммментарий
   String image = '';            // Картинка головна
-  String vin = '';                // Имя
-  DateTime dateEdit = DateTime.now(); // Дата редактирования
+  String vinCode = '';                // Имя
+  DateTime createdAt = DateTime.now(); // Дата створення
+  DateTime editedAt = DateTime.now(); // Дата редагування
 
   Car();
 
-  Car.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? 0;
-    uid = json['uid'] ?? '';
-    code = json['code'] ?? '';
-    name = json['name'] ?? '';
-    nickname = json['nickname'] ?? '';
-    description = json['description'] ?? '';
-    yearProduction = json['yearProduction'] ?? '';
-    mileage = json['mileage'] ?? 0;
-    rating = json['rating'] ?? 0;
-    comment = json['comment'] ?? '';
-    image = json['image'] ?? '';
-    vin = json['vin'] ?? '';
-    dateEdit = DateTime.parse(json['dateEdit'] ?? DateTime.now().toIso8601String());
-  }
-
   Car.fromJsonLaravel(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
+
+    typeTransportId = json['type_transport_id'] ?? 0;
+    carBrandId = json['car_brand_id'] ?? 0;
+    carModelId = json['car_model_id'] ?? 0;
+
     uid = json['uid'] ?? '';
     code = json['code'] ?? '';
     name = json['name'] ?? '';
@@ -44,9 +37,10 @@ class Car {
     mileage = json['mileage'] ?? 0;
     rating = json['rating'] ?? 0;
     comment = json['comment'] ?? '';
+    vinCode = json['vin_code'] ?? '';
     image = json['image'] ?? '';
-    vin = json['vin_code'] ?? '';
-    dateEdit = DateTime.parse(json['edited_at'] ?? DateTime.now().toIso8601String());
+    createdAt = DateTime.parse(json['created_t'] ?? DateTime.now().toIso8601String());
+    editedAt = DateTime.parse(json['edited_at'] ?? DateTime.now().toIso8601String());
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +48,11 @@ class Car {
     if (id != 0) {
       data['id'] = id;
     }
+
+    data['type_transport_id'] = typeTransportId;
+    data['car_brand_id'] = carBrandId;
+    data['car_model_id'] = carModelId;
+
     data['uid'] = uid;
     data['code'] = code;
     data['name'] = name;
@@ -61,11 +60,8 @@ class Car {
     data['description'] = description;
     data['year_production'] = yearProduction;
     data['mileage'] = mileage;
-    data['rating'] = rating;
-    data['comment'] = comment;
+    data['vin_code'] = vinCode;
     data['image'] = image;
-    data['vin'] = vin;
-    data['dateEdit'] = dateEdit.toIso8601String();
     return data;
   }
 }

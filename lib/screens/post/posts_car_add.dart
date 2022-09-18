@@ -4,26 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wp_car/models/api_response.dart';
 import 'package:wp_car/models/car.dart';
+import 'package:wp_car/models/post.dart';
 import 'package:wp_car/screens/auth/login.dart';
-import 'package:wp_car/services/car_service.dart';
+import 'package:wp_car/services/post_service.dart';
 import 'package:wp_car/services/user_service.dart';
 import 'package:wp_car/system/system.dart';
 
-class ScreenCarClientAdd extends StatefulWidget {
-  final Car? car;
+class ScreenPostsCarAdd extends StatefulWidget {
+  final Car carItem;
 
-  const ScreenCarClientAdd({
+  const ScreenPostsCarAdd({
     Key? key,
-    this.car,
+    required this.carItem,
   }) : super(key: key);
 
   @override
-  State<ScreenCarClientAdd> createState() => _ScreenCarClientAddState();
+  State<ScreenPostsCarAdd> createState() => _ScreenPostsCarAddState();
 }
 
-class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
+class _ScreenPostsCarAddState extends State<ScreenPostsCarAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  Post post = Post();
   String pathCarImage = '';
 
   bool _loading = false;
@@ -31,14 +33,16 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
   File? _imageFile;
   List<String> listImages = [];
 
-  final TextEditingController _nameTextController = TextEditingController();
-  final TextEditingController _nicknameTextController = TextEditingController();
+  String categoryId = '1';
+  final TextEditingController _titleTextController = TextEditingController();
   final TextEditingController _descriptionTextController =
-      TextEditingController();
-  final TextEditingController _yearProductionTextController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _mileageTextController = TextEditingController();
-  final TextEditingController _vinCodeTextController = TextEditingController();
+  final TextEditingController _costTextController = TextEditingController();
+
+  final TextEditingController _tagsTextController = TextEditingController();
+  bool draft = false;
+  bool enableComments = true;
 
   @override
   void initState() {
@@ -52,11 +56,11 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         centerTitle: true,
-        title: widget.car == null
+        title: widget.carItem == null
             ? const Text('Створення')
             : const Text('Редагування'),
         actions: [
-          IconButton(onPressed: () {_saveCar();}, icon: const Icon(Icons.save)),
+          IconButton(onPressed: () {_savePost();}, icon: const Icon(Icons.save)),
         ],
       ),
       body: _loading ? bodyProgress() : bodyData(),
@@ -65,23 +69,26 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
 
   void _createPost() async {
     String? image = _imageFile == null ? null : getStringImage(_imageFile);
-    ApiResponse response = await createUserCar(
-        _nameTextController.text,
-        _nicknameTextController.text,
+    ApiResponse response = await createCarPost(
+        categoryId,
+        widget.carItem.id.toString(),
+        _titleTextController.text,
         _descriptionTextController.text,
-        _yearProductionTextController.text,
         _mileageTextController.text,
-        _vinCodeTextController.text,
+        _costTextController.text,
+        _tagsTextController.text,
+        draft,
+        enableComments,
         image);
 
     if (response.error == null) {
       Navigator.of(context).pop();
     } else if (response.error == unauthorized) {
       logout().then((value) => {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const ScreenLogin()),
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const ScreenLogin()),
                 (route) => false)
-          });
+      });
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
@@ -94,23 +101,22 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
   void _editPost(int postId) async {
     String? image = _imageFile == null ? null : getStringImage(_imageFile);
 
-    ApiResponse response = await editUserCar(
-        postId,
-        _nameTextController.text,
-        _nicknameTextController.text,
+    ApiResponse response = await editCarPost(
+        widget.carItem.id,
+        post.id,
+        _titleTextController.text,
         _descriptionTextController.text,
-        _yearProductionTextController.text,
-        _mileageTextController.text,
-        _vinCodeTextController.text,
+        int.parse(_mileageTextController.text),
+        double.parse(_costTextController.text),
         image);
     if (response.error == null) {
       Navigator.of(context).pop();
     } else if (response.error == unauthorized) {
       logout().then((value) => {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const ScreenLogin()),
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const ScreenLogin()),
                 (route) => false)
-          });
+      });
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
@@ -121,20 +127,20 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
   }
 
   void _loadPost() async {
-    if (widget.car == null) {
+    if (widget.carItem == null) {
       return;
     }
   }
 
-  void _saveCar() async {
+  void _savePost() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _loading = !_loading;
       });
-      if (widget.car == null) {
+      if (post.id == 0) {
         _createPost();
       } else {
-        _editPost(widget.car!.id);
+        _editPost(widget.carItem.id);
       }
     }
   }
@@ -151,14 +157,14 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
   Widget bodyProgress() {
     return const Center(
         child: CircularProgressIndicator(
-      value: null,
-      strokeWidth: 4.0,
-    ));
+          value: null,
+          strokeWidth: 4.0,
+        ));
   }
 
   Widget bodyData() {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
@@ -169,7 +175,7 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
         ));
   }
 
-  Widget editCarImage() {
+  Widget editPostImage() {
     return Positioned(
         bottom: 10,
         right: 10,
@@ -179,7 +185,7 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
           },
           child: Ink(
               child:
-                  Icon(Icons.edit, size: 30, color: Colors.teal.shade300)),
+              Icon(Icons.edit, size: 30, color: Colors.teal.shade300)),
         ));
   }
 
@@ -189,7 +195,7 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
       child: Stack(
         children: [
           GestureDetector(
-            onTap: () {
+            onTap: (){
               getImage();
             },
             child: Container(
@@ -203,10 +209,10 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
               height: 200,
               width: double.infinity,
               child:
-                  Icon(Icons.car_repair, size: 100, color: Colors.grey.shade200),
+              Icon(Icons.car_repair, size: 100, color: Colors.grey.shade200),
             ),
           ),
-          editCarImage(),
+          editPostImage(),
         ],
       ),
     );
@@ -239,7 +245,7 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
             ),
           ),
         ),
-        editCarImage(),
+        editPostImage(),
       ]),
     );
   }
@@ -255,50 +261,27 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: TextFormField(
-              controller: _nameTextController,
+              controller: _titleTextController,
               keyboardType: TextInputType.text,
               validator: (val) =>
-                  val!.isEmpty ? 'Заповніть назву автомобіля' : null,
+              val!.isEmpty ? 'Заповніть заголовок публікації' : null,
               decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  labelText: 'Назва автомобіля',
-                  hintText: "Вкажіть назву автомобіля...",
+                  labelText: 'Заголовок публікації',
+                  hintText: "Вкажіть заголовок публікації...",
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                   border: OutlineInputBorder(
                       borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
+                      BorderSide(width: 1, color: Colors.grey.shade200))),
             ),
           ),
 
-          /// Нік
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: TextFormField(
-              controller: _nicknameTextController,
-              keyboardType: TextInputType.text,
-              validator: (val) => val!.isEmpty ? 'Кличка автомобіля' : null,
-              decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  labelText: 'Кличка автомобіля',
-                  hintText: "Не обов'язково...",
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
-            ),
-          ),
-
-          /// Опис автомобіля
+          /// Опис статті
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: TextFormField(
@@ -306,44 +289,20 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
               keyboardType: TextInputType.multiline,
               maxLines: 9,
               validator: (val) =>
-                  val!.isEmpty ? 'Заповніть опис автомобіля' : null,
+              val!.isEmpty ? 'Заповніть текст публікації' : null,
               decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  labelText: 'Опис автомобіля',
-                  hintText: 'Вкажіть опис автомобіля...',
+                  labelText: 'Текст публікації',
+                  hintText: 'Вкажіть текст публікації...',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                   border: OutlineInputBorder(
                       borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
-            ),
-          ),
-
-          /// Рік виробництва
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: TextFormField(
-              controller: _yearProductionTextController,
-              keyboardType: TextInputType.datetime,
-              validator: (val) =>
-                  val!.isEmpty ? 'Заповніть рік виробництва' : null,
-              decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  labelText: 'Рік виробництва',
-                  hintText: '',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
+                      BorderSide(width: 1, color: Colors.grey.shade200))),
             ),
           ),
 
@@ -353,43 +312,43 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
             child: TextFormField(
               controller: _mileageTextController,
               keyboardType: TextInputType.number,
-              validator: (val) => val!.isEmpty ? 'Заповніть пробіг' : null,
+              //validator: (val) => val!.isEmpty ? 'Заповніть пробіг' : null,
               decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   labelText: 'Пробіг (км)',
-                  hintText: '',
+                  hintText: 'Не обов\'язково',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                   border: OutlineInputBorder(
                       borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
+                      BorderSide(width: 1, color: Colors.grey.shade200))),
             ),
           ),
 
-          /// VIN
+          /// Вартість ремонту
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: TextFormField(
-              controller: _vinCodeTextController,
-              keyboardType: TextInputType.text,
-              validator: (val) => val!.isEmpty ? 'Заповніть VIN-код' : null,
+              controller: _costTextController,
+              keyboardType: TextInputType.number,
+              //validator: (val) => val!.isEmpty ? 'Заповніть вартість' : null,
               decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  labelText: 'VIN-код',
-                  hintText: '',
+                  labelText: 'Вартість',
+                  hintText: 'Не обов\'язково',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                   border: OutlineInputBorder(
                       borderSide:
-                          BorderSide(width: 1, color: Colors.grey.shade200))),
+                      BorderSide(width: 1, color: Colors.grey.shade200))),
             ),
           ),
         ],
@@ -401,7 +360,7 @@ class _ScreenCarClientAddState extends State<ScreenCarClientAdd> {
     return Padding(
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
         child: kTextButton('Зберегти', () {
-          _saveCar();
+          _savePost();
         }));
   }
 }

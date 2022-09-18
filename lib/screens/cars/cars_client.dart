@@ -24,7 +24,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
   @override
   void initState() {
     if (listCars.isEmpty) {
-      loadOrders();
+      _loadCars();
     }
     super.initState();
   }
@@ -37,29 +37,35 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
         centerTitle: true,
         title: const Text('Мої автомобілі'),
         actions: [
-          IconButton(onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ScreenCarClientAdd(),
-              ),
-            );
-            setState(() {
-              loadOrders();
-            });
-          }, icon: const Icon(Icons.add)),
+          IconButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ScreenCarClientAdd(),
+                  ),
+                );
+                setState(() {
+                  _loadCars();
+                });
+              },
+              icon: const Icon(Icons.add)),
         ],
       ),
       bottomNavigationBar: const WidgetBottomNavigationBar(),
-      body: loadingCars
-          ? bodyProgress()
-          : listCars.isEmpty
-              ? noOrders()
-              : yesOrders(),
+      body: RefreshIndicator(
+          onRefresh: () async {
+            await _loadCars();
+          },
+          child: loadingCars
+              ? bodyProgress()
+              : listCars.isEmpty
+                  ? noCars()
+                  : yesCars()),
     );
   }
 
-  loadOrders() async {
+  _loadCars() async {
     setState(() {
       loadingCars = true;
     });
@@ -70,7 +76,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     userId = await getUserId();
 
     // Request to server
-    ApiResponse response = await getCars();
+    ApiResponse response = await getUserCars();
 
     // Read response
     if (response.error == null) {
@@ -104,37 +110,36 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
     ));
   }
 
-  Widget yesOrders() {
-    return RefreshIndicator(
-        onRefresh: () async {
-          await loadOrders();
-        },
-        child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                carsCards(),
-              ],
-            )));
+  Widget yesCars() {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(5, 8, 5, 0),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            carsCards(),
+          ],
+        ));
   }
 
-  Widget noOrders() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          Icon(
-            Icons.list_alt,
-            color: Colors.grey,
-            size: 60.0,
+  Widget noCars() {
+    return ListView(
+        shrinkWrap: true,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height/2-100,),
+              const Icon(
+                Icons.car_rental,
+                color: Colors.grey,
+                size: 60.0,
+              ),
+              const Text('Список автомобілів порожній',
+                  style: TextStyle(color: Colors.grey)),
+            ],
           ),
-          Text('Список автомобілів порожній',
-              style: TextStyle(color: Colors.grey)),
         ],
-      ),
-    );
+      );
   }
 
   Widget carsCards() {
@@ -155,7 +160,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
                 ),
               );
               setState(() {
-                loadOrders();
+                _loadCars();
               });
             },
             child: Card(
@@ -169,7 +174,7 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
                     child: Image.network(
                       fit: BoxFit.fitWidth,
                       carItem.image != ''
-                          ? carItem.image
+                          ? siteURL + carItem.image
                           : 'https://placeimg.com/640/480/vehicle',
                     ),
                   ),
@@ -209,5 +214,4 @@ class _ScreenCarsClientState extends State<ScreenCarsClient> {
       },
     );
   }
-
 }
